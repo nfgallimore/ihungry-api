@@ -50,3 +50,6 @@ gem 'jwt'
 # simplifies controller logic
 gem 'simple_command'
 
+# simple http requests
+gem 'httparty'
+
