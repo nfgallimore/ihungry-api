@@ -8,7 +8,7 @@ class AuthorizeApiRequest
   def call
     user
   end
-
+  
   private
 
   attr_reader :headers

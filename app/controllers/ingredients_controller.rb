@@ -1,32 +1,37 @@
 class IngredientsController < ApplicationController
   before_action :set_ingredient, only: [:show, :update, :destroy]
-
+  
   # GET /ingredients
   def index
-    @ingredients = Ingredient.all
-
+    @ingredients = Ingredient.all.where({ user_id: session[:current_user].id })
     render json: @ingredients
   end
 
   # GET /ingredients/1
   def show
-    render json: @ingredient
-  end
-
-  # POST /ingredients
-  def create
-    @ingredient = Ingredient.new(ingredient_params)
-
-    if @ingredient.save
-      render json: @ingredient, status: :created, location: @ingredient
+    if @ingredient.user_id != session[:current_user].id
+      render json: { error: 'Not Authorized' }, status: 401
     else
-      render json: @ingredient.errors, status: :unprocessable_entity
+      render json: @ingredient
     end
   end
 
+  # POST /ingredients
+    def create
+      @ingredient = Ingredient.new(ingredient_params)
+      @ingredient.user_id = session[:current_user].id
+      if @ingredient.save
+        render json: @ingredient, status: :created, location: @ingredient
+      else
+        render json: @ingredient.errors, status: :unprocessable_entity
+      end
+    end 
+
   # PATCH/PUT /ingredients/1
   def update
-    if @ingredient.update(ingredient_params)
+    if @ingredient.user_id != session[:current_user].id
+      render json: { error: 'Not Authorized' }, status: 401
+    elsif @ingredient.update(ingredient_params)
       render json: @ingredient
     else
       render json: @ingredient.errors, status: :unprocessable_entity
@@ -35,7 +40,11 @@ class IngredientsController < ApplicationController
 
   # DELETE /ingredients/1
   def destroy
-    @ingredient.destroy
+    if @ingredient.user_id != session[:current_user].id
+      render json: { error: 'Not Authorized' }, status: 401
+    else
+      @ingredient.destroy
+    end
   end
 
   private
