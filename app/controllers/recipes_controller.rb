@@ -1,4 +1,5 @@
 require 'httparty'
+require 'json'
 
 class RecipesController < ApplicationController
   def index
@@ -14,14 +15,16 @@ class RecipesController < ApplicationController
     ingredients_url = ""
 
     for i in 0 ... ingredients.size - 1
-      ingredient = ingredients[i].title.squish.downcase.tr(" ","%2c")
+      ingredient = CGI.escape(ingredients[i].title.downcase)
       ingredients_url << ingredient << "%2c"
     end
 
+    ingredients_url << CGI.escape(ingredients[ingredients.size - 1].title.downcase)
 
     number = 5
     ranking = 1
     ignore_pantry = false
+
     url =  "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?" + 
            "number=#{number}" + 
            "&ranking=#{ranking}" +
@@ -30,9 +33,10 @@ class RecipesController < ApplicationController
 
 
     response = HTTParty.get(url, :headers => headers)
+    recipes = JSON.parse(response.body)
+    filteredRecipes = json.select{ |recipe| recipe[:missedIngredientCount] == 0}
+
+    render json: filteredRecipes
     
-    render json: response[0]
   end
-
-
 end
