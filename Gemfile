@@ -53,3 +53,5 @@ gem 'simple_command'
 # simple http requests
 gem 'httparty'
 
+# json stuff
+gem 'json'

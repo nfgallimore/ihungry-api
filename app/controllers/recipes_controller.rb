@@ -75,9 +75,9 @@ class RecipesController < ApplicationController
 
   private
 
-  # gets converted unit for ingredient
+  # converts user_ingredient into api ingredient unit
   def convert_unit(user_ingredient, api_ingredient_unit)
-    user_ingredient.quantity
+    -1
   end
 
   # get matching ingredient
@@ -87,13 +87,11 @@ class RecipesController < ApplicationController
 
   #filter recipe requiring more ingredient than user has
   def user_has_ingredient_quantities_to_make_recipe(recipe)
-    recipe['usedIngredients'].select do |i|
-      convert_unit(get_user_ingredient(i), i['unit']) < i['amount'].to_f
-    end
+    recipe['usedIngredients'].none? { |i| 
+      convert_unit(get_user_ingredient(i), i['unit']) < i['amount'].to_f } 
   end
 
-
-  # sets the different request headers
+  # set the different request headers
   def setup
     @rapid_header = { 
       "X-RapidAPI-Host" => "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com",
