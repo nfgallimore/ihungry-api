@@ -1,6 +1,14 @@
 require 'httparty'
 require 'json'
 
+class SpoonacularIngredient
+  def initialize(name, amount, unit)
+    @name = name
+    @amount = amount
+    @unit = unit
+  end
+end
+
 class RecipesController < ApplicationController
   before_action :setup
 
@@ -32,11 +40,14 @@ class RecipesController < ApplicationController
     file.close
 
     # filter recipes with missing ingredients
-    filteredRecipes = recipes.select{ |recipe| recipe['missedIngredientCount'] == 0}
+    filtered_recipes = recipes.select{ |recipe| recipe['missedIngredientCount'] == 0}
 
-    filteredRecipes = filter_ingredient_quantity(filteredRecipes)
+    # filter recipes requiring more ingredient than user has
+    filtered_recipes = filtered_recipes.select do |r|
+      user_has_ingredient_quantities_to_make_recipe(r)
+    end
 
-    render json: filteredRecipes
+    render json: filtered_recipes
   end
 
   # GET /recipes/spoonacular/info
@@ -66,20 +77,21 @@ class RecipesController < ApplicationController
 
   # gets converted unit for ingredient
   def convert_unit(user_ingredient, api_ingredient_unit)
-
+    user_ingredient.quantity
   end
 
-  # filter recipes requiring more ingredient than user has
-  def filter_ingredient_quantity(recipes)
-    recipes_ingredients = recipes.map { |r| 
-      { r['used_ingredients']['name'], 
-        r['used_ingredients']['amount'], 
-        r['used_ingredients']['unit'] }
-
-    recipes_ingredients.each do |recipe|
-      if recipe.amount > @ingredients.select{ |i| recipe.name.in? i.title }[0].quantity
-        puts "valid"
+  # get matching ingredient
+  def get_user_ingredient(spoonacular_ingredient)
+    @ingredients[0]
   end
+
+  #filter recipe requiring more ingredient than user has
+  def user_has_ingredient_quantities_to_make_recipe(recipe)
+    recipe['usedIngredients'].select do |i|
+      convert_unit(get_user_ingredient(i), i['unit']) < i['amount'].to_f
+    end
+  end
+
 
   # sets the different request headers
   def setup
@@ -102,7 +114,4 @@ class RecipesController < ApplicationController
     params.permit(:id, :q)
   end
 
-  class spoonacular_ingredient
-
-  end
 end
