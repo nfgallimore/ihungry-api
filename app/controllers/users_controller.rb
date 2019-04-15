@@ -17,13 +17,6 @@ skip_before_action :authenticate_request, only: %i[login register]
     authenticate params[:email], params[:password]
   end
 
-  # GET /test
-  def test
-    render json: {
-      message: 'You have passed authentication and authorization test'
-    }
-  end
-
 	private
 
   def authenticate(email, password)
