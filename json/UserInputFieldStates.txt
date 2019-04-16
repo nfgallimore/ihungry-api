@@ -1,0 +1,42 @@
+Fields:
+
+Picture of UPC
+UPC Number
+Names for Ingredient
+Quantity Left
+Quantity Left Unit
+Product Quantity
+Product Quantity Unit
+
+
+
+Picture Inputted:
+
+Picture of UPC
+UPC Number (optional)
+Names for Ingredient (optional)
+Quantity Left (optional)
+Quantity Left Unit (optional)
+Product Quantity (optional)
+Product Quantity Unit (optional)
+
+
+UPC Number inputted:
+
+Picture of UPC (optional)
+UPC Number
+Names for Ingredient (optional)
+Quantity Left (optional)
+Quantity Left Unit (optional)
+Product Quantity (optional)
+Product Quantity Unit (optional)
+
+Names for Ingredient inputted:
+
+Picture of UPC (optional)
+UPC Number (optional)
+Names for Ingredient
+Quantity Left (optional)
+Quantity Left Unit (optional)
+Product Quantity (optional)
+Product Quantity Unit (optional)
