@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_15_151830) do
+ActiveRecord::Schema.define(version: 2019_04_17_001336) do
 
   create_table "ingredients", force: :cascade do |t|
     t.string "title"
@@ -18,8 +18,34 @@ ActiveRecord::Schema.define(version: 2019_04_15_151830) do
     t.string "unit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id"
+  end
+
+  create_table "recipes", force: :cascade do |t|
+    t.string "name"
+    t.string "raw_text"
+    t.string "url"
+    t.string "image"
+    t.decimal "rating"
+    t.string "source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "upcs", force: :cascade do |t|
     t.string "upc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "user_ingredients", force: :cascade do |t|
+    t.string "quantity_left"
+    t.string "quantity_left_unit"
+    t.integer "user_id"
+    t.integer "ingredient_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ingredient_id"], name: "index_user_ingredients_on_ingredient_id"
+    t.index ["user_id"], name: "index_user_ingredients_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
