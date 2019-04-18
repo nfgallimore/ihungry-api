@@ -3,7 +3,7 @@ class IngredientsController < ApplicationController
   
   # GET /ingredients
   def index
-    @ingredients = Ingredient.all.where({ user_id: session[:current_user].id })
+    @ingredients = Ingredient.all.where({ user: session[:current_user].id })
     render json: @ingredients
   end
 
@@ -18,9 +18,20 @@ class IngredientsController < ApplicationController
 
   # POST /ingredients
     def create
-      @ingredient = Ingredient.new(ingredient_params)
-      @ingredient.user_id = session[:current_user].id
-      if @ingredient.save
+      # @upc = Upc.create upc = ingredient_params[:upc]
+      @ingredient = Ingredient.new do |i|
+        i.quantity = ingredient_params[:quantity]
+        i.unit = ingredient_params[:unit]
+        i.title = ingredient_params[:title]
+      end
+      @user_ingredient = UserIngredient.new do |ui|
+        ui.quantity_left = ingredient_params[:quantity_left]
+        ui.quantity_left_unit = ingredient_params[:quantity_left_unit]
+        ui.user = session[:current_user]
+        ui.ingredient = @ingredient
+      end
+
+      if @ingredient.save && @user_ingredient.save
         render json: @ingredient, status: :created, location: @ingredient
       else
         render json: @ingredient.errors, status: :unprocessable_entity
@@ -55,6 +66,6 @@ class IngredientsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def ingredient_params
-      params.require(:ingredient).permit(:title, :quantity, :unit, :upc)
+      params.require(:ingredient).permit(:title, :quantity, :unit, :upc, :quantity_left, :quantity_left_unit)
     end
 end
