@@ -18,12 +18,23 @@ class IngredientsController < ApplicationController
 
   # POST /ingredients
     def create
-      # @upc = Upc.create upc = ingredient_params[:upc]
+
+      # create the upc
+      @upc = Upc.new do |u|
+        u.upc_string = ingredient_params[:upc]
+      end
+
+      # create the ingredient
       @ingredient = Ingredient.new do |i|
         i.quantity = ingredient_params[:quantity]
         i.unit = ingredient_params[:unit]
         i.title = ingredient_params[:title]
       end
+
+      # create the ingredient_upc
+      @ingredient.upcs << @upc
+
+      # create the user_ingredient
       @user_ingredient = UserIngredient.new do |ui|
         ui.quantity_left = ingredient_params[:quantity_left]
         ui.quantity_left_unit = ingredient_params[:quantity_left_unit]
@@ -31,8 +42,18 @@ class IngredientsController < ApplicationController
         ui.ingredient = @ingredient
       end
 
-      if @ingredient.save && @user_ingredient.save
-        render json: @ingredient, status: :created, location: @ingredient
+      begin
+        ActiveRecord::Base.transaction do
+          success = @upc.save && @ingredient.save && @user_ingredient.save
+          num = 1
+        end
+      rescue ActiveRecord::RecordNotUnique => e
+        render json: { message: 'Duplicate record' }, status: :unprocessable_entity
+        return
+      end
+
+      if success
+        render json: num, status: :created, location: @ingredient
       else
         render json: @ingredient.errors, status: :unprocessable_entity
       end
@@ -66,6 +87,6 @@ class IngredientsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def ingredient_params
-      params.require(:ingredient).permit(:title, :quantity, :unit, :upc, :quantity_left, :quantity_left_unit)
+      params.permit(:title, :quantity, :unit, :upc, :quantity_left, :quantity_left_unit)
     end
 end
