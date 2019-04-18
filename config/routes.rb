@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
 
   resources :ingredients
+  resources :recipes
+  resources :user_ingredients
 
-  get 'recipes/yummly', to: 'recipes#yummly'
-  get 'recipes/yummly/info', to: 'recipes#yummly_info'
+  get 'yummly', to: 'yummly#recipes'
+  get 'yummly/info', to: 'yummly#recipe_info'
 
-  get 'recipes/spoonacular', to: 'recipes#spoonacular'
-  get 'recipes/spoonacular/info', to: 'recipes#spoonacular_info'
+  get 'spoonacular', to: 'spoonacular#recipes'
+  get 'spoonacular/info', to: 'spoonacular#recipe_info'
 
 	post 'auth/register', to: 'users#register'
   post 'auth/login', to: 'users#login'
