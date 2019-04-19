@@ -30,15 +30,14 @@ class SpoonacularController < ApplicationController
     # recipes = JSON.parse(file.read)
     # file.close
 
-    if (recipe_params[:filter] == 'true')
-      # filter recipes with missing ingredients
-      recipes = recipes.select{ |recipe| recipe['missedIngredientCount'] == 0}
+    # # filter recipes with missing ingredients
+    # recipes = recipes.select{ |recipe| recipe['missedIngredientCount'] == 0}
 
-      # filter recipes requiring more ingredient than user has
-      recipes = recipes.select do |r|
-        user_has_ingredient_quantities_to_make_recipe(r)
-      end
-    end
+    # # filter recipes requiring more ingredient than user has
+    # recipes = recipes.select do |r|
+    #   user_has_ingredient_quantities_to_make_recipe(r)
+    # end
+
 
     render json: recipes
   end

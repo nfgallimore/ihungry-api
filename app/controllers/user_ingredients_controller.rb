@@ -3,8 +3,7 @@ class UserIngredientsController < ApplicationController
 
   # GET /user_ingredients
   def index
-    @user_ingredients = UserIngredient.all
-
+    @user_ingredients = UserIngredient.all.where({ user_id: session[:current_user].id })
     render json: @user_ingredients
   end
 
